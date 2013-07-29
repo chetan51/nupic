@@ -25,6 +25,7 @@
 
 """A client to create a CLA model for language."""
 
+import csv
 import logging
 
 from nupic.data.datasethelpers import findDataset
@@ -53,7 +54,7 @@ _METRIC_SPECS = (
                params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
 )
 
-_NUM_RECORDS = 1000
+_NUM_RECORDS = 80
 
 
 

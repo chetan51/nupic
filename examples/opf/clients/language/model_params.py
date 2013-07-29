@@ -63,7 +63,7 @@ MODEL_PARAMS = {
             #
             # (value generated from DS_ENCODER_SCHEMA)
             'encoders': {   'letter': {
-                                   'fieldname': u'consumption',
+                                   'fieldname': u'letter',
                                    'n': 100,
                                    'name': u'letter',
                                    'type': 'SDRCategoryEncoder',
