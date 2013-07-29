@@ -35,9 +35,10 @@ import model_params
 
 _LOGGER = logging.getLogger(__name__)
 
-_DATA_PATH = "extra/language/big.csv"
+_DATA_PATH = "extra/language/tiny.csv"
 
 _NUM_RECORDS = 100000
+_NUM_REPEATS = 100
 
 
 
@@ -49,19 +50,26 @@ def createModel():
 def runLanguage():
   model = createModel()
   model.enableInference({'predictedField': 'letter'})
-  with open (findDataset(_DATA_PATH)) as fin:
-    reader = csv.reader(fin)
-    headers = reader.next()
-    reader.next()
-    reader.next()
-    for i, record in enumerate(reader, start=1):
-      modelInput = dict(zip(headers, record))
-      result = model.run(modelInput)
-      isLast = i == _NUM_RECORDS
-      prediction = "".join(result.inferences['multiStepBestPredictions'].values())
-      _LOGGER.info("Step %i: %s ==> %s", i, modelInput['letter'], prediction)
-      if isLast:
-        break
+  for r in range(_NUM_REPEATS):
+    should_print = r % 5 == 0
+
+    if should_print:
+      _LOGGER.info("\n====== Repeat #%d =======\n", r)
+
+    with open (findDataset(_DATA_PATH)) as fin:
+      reader = csv.reader(fin)
+      headers = reader.next()
+      reader.next()
+      reader.next()
+      for i, record in enumerate(reader, start=1):
+        modelInput = dict(zip(headers, record))
+        result = model.run(modelInput)
+        isLast = i == _NUM_RECORDS
+        if should_print:
+          prediction = "".join(result.inferences['multiStepBestPredictions'].values())
+          _LOGGER.info("Step %i: %s ==> %s", i, modelInput['letter'], prediction)
+        if isLast:
+          break
 
 
 
