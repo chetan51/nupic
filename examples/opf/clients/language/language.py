@@ -38,7 +38,7 @@ _LOGGER = logging.getLogger(__name__)
 _DATA_PATH = "extra/language/tiny.csv"
 
 _NUM_RECORDS = 100000
-_NUM_REPEATS = 100
+_NUM_REPEATS = 1000
 
 
 
