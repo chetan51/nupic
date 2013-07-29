@@ -29,30 +29,13 @@ import csv
 import logging
 
 from nupic.data.datasethelpers import findDataset
-from nupic.frameworks.opf.metrics import MetricSpec
 from nupic.frameworks.opf.modelfactory import ModelFactory
-from nupic.frameworks.opf.predictionmetricsmanager import MetricsManager
 
 import model_params
 
 _LOGGER = logging.getLogger(__name__)
 
 _DATA_PATH = "extra/language/wikipedia.csv"
-
-_METRIC_SPECS = (
-    MetricSpec(field='letter', metric='multiStep',
-               inferenceElement='multiStepBestPredictions',
-               params={'errorMetric': 'aae', 'window': 1000, 'steps': 1}),
-    MetricSpec(field='letter', metric='trivial',
-               inferenceElement='prediction',
-               params={'errorMetric': 'aae', 'window': 1000, 'steps': 1}),
-    MetricSpec(field='letter', metric='multiStep',
-               inferenceElement='multiStepBestPredictions',
-               params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
-    MetricSpec(field='letter', metric='trivial',
-               inferenceElement='prediction',
-               params={'errorMetric': 'altMAPE', 'window': 1000, 'steps': 1}),
-)
 
 _NUM_RECORDS = 80
 
@@ -66,8 +49,6 @@ def createModel():
 def runLanguage():
   model = createModel()
   model.enableInference({'predictedField': 'letter'})
-  metricsManager = MetricsManager(_METRIC_SPECS, model.getFieldInfo(),
-                                  model.getInferenceType())
   with open (findDataset(_DATA_PATH)) as fin:
     reader = csv.reader(fin)
     headers = reader.next()
@@ -75,15 +56,9 @@ def runLanguage():
     reader.next()
     for i, record in enumerate(reader, start=1):
       modelInput = dict(zip(headers, record))
-      modelInput["letter"] = modelInput["letter"]
       result = model.run(modelInput)
-      result.metrics = metricsManager.update(result)
       isLast = i == _NUM_RECORDS
-      if i % 100 == 0 or isLast:
-        _LOGGER.info("After %i records, 1-step altMAPE=%f", i,
-                    result.metrics["multiStepBestPredictions:multiStep:"
-                                   "errorMetric='altMAPE':steps=1:window=1000:"
-                                   "field=letter"])
+      _LOGGER.info("%i: input = %s, predictions=%s", i, modelInput['letter'], result.inferences['multiStepBestPredictions'])
       if isLast:
         break
 
