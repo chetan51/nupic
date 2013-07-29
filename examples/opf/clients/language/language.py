@@ -35,7 +35,7 @@ import model_params
 
 _LOGGER = logging.getLogger(__name__)
 
-_DATA_PATH = "extra/language/wikipedia.csv"
+_DATA_PATH = "extra/language/toy.csv"
 
 _NUM_RECORDS = 80
 
