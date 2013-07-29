@@ -35,9 +35,9 @@ import model_params
 
 _LOGGER = logging.getLogger(__name__)
 
-_DATA_PATH = "extra/language/toy.csv"
+_DATA_PATH = "extra/language/big.csv"
 
-_NUM_RECORDS = 80
+_NUM_RECORDS = 100000
 
 
 
@@ -58,7 +58,8 @@ def runLanguage():
       modelInput = dict(zip(headers, record))
       result = model.run(modelInput)
       isLast = i == _NUM_RECORDS
-      _LOGGER.info("%i: input = %s, predictions=%s", i, modelInput['letter'], result.inferences['multiStepBestPredictions'])
+      prediction = "".join(result.inferences['multiStepBestPredictions'].values())
+      _LOGGER.info("Step %i: %s ==> %s", i, modelInput['letter'], prediction)
       if isLast:
         break
 
