@@ -213,19 +213,19 @@ class SpatialPoolerTest(unittest.TestCase):
     sp = SpatialPooler(**params)
     self.assertTrue(sp.useGlobalInhibition())
 
-    # Test with small potentialRadius
+    # Test with small inhibitionRadius
     params["globalInhibition"] = False
     sp = SpatialPooler(**params)
     sp.setInhibitionRadius(1)
     self.assertFalse(sp.useGlobalInhibition())
 
-    # Test with potentialRadius > numColumns and < numInputs
+    # Test with inhibitionRadius > numColumns and < numInputs
     params["globalInhibition"] = False
     sp = SpatialPooler(**params)
     sp.setInhibitionRadius(25)
     self.assertTrue(sp.useGlobalInhibition())
 
-    # Test with minimum potentialRadius for global inhibition
+    # Test with minimum inhibitionRadius for global inhibition
     params["globalInhibition"] = False
     sp = SpatialPooler(**params)
     sp.setInhibitionRadius(2)

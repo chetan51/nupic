@@ -713,7 +713,6 @@ class SpatialPooler(object):
       activeArray[activeColumns] = 1
 
 
-
   def _stripNeverLearned(self, activeColumns):
     """Removes the set of columns who have never been active from the set of
     active columns selected in the inhibition round. Such columns cannot
@@ -733,7 +732,7 @@ class SpatialPooler(object):
     Updates the minimum duty cycles defining normal activity for a column. A
     column with activity duty cycle below this minimum threshold is boosted.
     """
-    if self._globalInhibition or self._inhibitionRadius > self._numInputs:
+    if self.useGlobalInhibition():
       self._updateMinDutyCyclesGlobal()
     else:
       self._updateMinDutyCyclesLocal()
@@ -1301,8 +1300,7 @@ class SpatialPooler(object):
     # Add our fixed little bit of random noise to the scores to help break ties.
     overlaps += self._tieBreaker
 
-    if self._globalInhibition or \
-      self._inhibitionRadius > max(self._columnDimensions):
+    if self.useGlobalInhibition():
       return self._inhibitColumnsGlobal(overlaps, density)
     else:
       return self._inhibitColumnsLocal(overlaps, density)
