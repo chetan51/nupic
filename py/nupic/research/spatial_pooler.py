@@ -647,6 +647,12 @@ class SpatialPooler(object):
     connectedCounts[:] = self._connectedCounts[:]
 
 
+  def useGlobalInhibition(self):
+    """Returns whether global inhibition optimization should be used"""
+    return (self._globalInhibition or
+            self._inhibitionRadius * 2 + 1 >= max(self._columnDimensions))
+
+
   def compute(self, inputVector, learn, activeArray):
     """
     This is the primary public method of the SpatialPooler class. This

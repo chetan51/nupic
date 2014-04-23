@@ -201,6 +201,37 @@ class SpatialPoolerTest(unittest.TestCase):
     self.assertEqual(spOutput, expectedOutput)
 
 
+  def testUseGlobalInhibition(self):
+    params = self._params.copy()
+    params.update({
+      "inputDimensions": [10, 20],
+      "columnDimensions": [4, 5]
+    })
+
+    # Test with globalInhibition = True
+    params["globalInhibition"] = True
+    sp = SpatialPooler(**params)
+    self.assertTrue(sp.useGlobalInhibition())
+
+    # Test with small potentialRadius
+    params["globalInhibition"] = False
+    sp = SpatialPooler(**params)
+    sp.setInhibitionRadius(1)
+    self.assertFalse(sp.useGlobalInhibition())
+
+    # Test with potentialRadius > numColumns and < numInputs
+    params["globalInhibition"] = False
+    sp = SpatialPooler(**params)
+    sp.setInhibitionRadius(25)
+    self.assertTrue(sp.useGlobalInhibition())
+
+    # Test with minimum potentialRadius for global inhibition
+    params["globalInhibition"] = False
+    sp = SpatialPooler(**params)
+    sp.setInhibitionRadius(2)
+    self.assertTrue(sp.useGlobalInhibition())
+
+
   def testStripNeverLearned(self):
     sp = self._sp
     
