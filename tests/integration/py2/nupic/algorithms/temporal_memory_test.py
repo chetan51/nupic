@@ -151,18 +151,15 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
     self.finishSetUp(ConsecutivePatternMachine(
       self.tm.connections.numberOfColumns(), 1))
 
-    sequenceA = self.sequenceMachine.generateFromNumbers([0, 1, 2, 3, None])
-    sequenceB = self.sequenceMachine.generateFromNumbers([4, 1, 2, 5, None])
-
-    self.feedTM(sequenceA, num=5)
+    sequenceA = self.sequenceMachine.generateFromNumbers([1, 2, 3, 4, None])
+    sequenceB = self.sequenceMachine.generateFromNumbers([0, 2, 3, 5, None])
 
     (_, _, predictedActiveColumnsList, _, _) = self.feedTM(sequenceA,
-                                                            learn=False)
-    self.assertEqual(len(predictedActiveColumnsList[3]), 1)
+                                                           num=10)
+    self.assertEqual(len(predictedActiveColumnsList[17]), 1)
 
-    self.feedTM(sequenceB)
-
-    self.feedTM(sequenceB, num=2)
+    for _ in xrange(3):
+      self.feedTM(sequenceB)
 
     (_, _, predictedActiveColumnsList, _, _) = self.feedTM(sequenceB,
                                                             learn=False)
@@ -198,16 +195,17 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
 
   def testC(self):
     """High order sequences (alternating)"""
-    self.initTM()
+    self.initTM({"connectedPermanence": 0.4})
     self.finishSetUp(ConsecutivePatternMachine(
       self.tm.connections.numberOfColumns(), 1))
 
-    sequence  = self.sequenceMachine.generateFromNumbers([0, 1, 2, 3, None])
-    sequence += self.sequenceMachine.generateFromNumbers([4, 1, 2, 5, None])
+    sequence  = self.sequenceMachine.generateFromNumbers([1, 2, 3, 4, None])
+    sequence += self.sequenceMachine.generateFromNumbers([0, 2, 3, 5, None])
 
-    self.feedTM(sequence)
+    for _ in xrange(5):
+      self.feedTM(sequence)
 
-    self.feedTM(sequence, num=10)
+    self.feedTM(sequence, num=5)
 
     (_, _, predictedActiveColumnsList,
            predictedInactiveColumnsList, _) = self.feedTM(sequence,
@@ -223,6 +221,28 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
 
 
   def testD(self):
+    """Multiple high order sequences (alternating)"""
+    self.initTM({"columnDimensions": [8]})
+    self.finishSetUp(ConsecutivePatternMachine(
+      self.tm.connections.numberOfColumns(), 1))
+
+    sequence  = self.sequenceMachine.generateFromNumbers([0, 2, 3, 4, None])
+    sequence += self.sequenceMachine.generateFromNumbers([0, 2, 3, 6, None])
+    sequence += self.sequenceMachine.generateFromNumbers([1, 2, 3, 5, None])
+    sequence += self.sequenceMachine.generateFromNumbers([1, 2, 3, 7, None])
+
+    self.feedTM(sequence)
+
+    self.feedTM(sequence, num=10)
+
+    (_, _, predictedActiveColumnsList,
+     predictedInactiveColumnsList, _) = self.feedTM(sequence,
+                                                    learn=False)
+
+    # TODO: Add tests
+
+
+  def testE(self):
     """Endlessly repeating sequence of 2 elements"""
     self.initTM({"columnDimensions": [2]})
     self.finishSetUp(ConsecutivePatternMachine(
@@ -236,7 +256,7 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
     self.feedTM(sequence, num=50)
 
 
-  def testE(self):
+  def testF(self):
     """Endlessly repeating sequence of 2 elements with maxNewSynapseCount=1"""
     self.initTM({"columnDimensions": [2],
                  "maxNewSynapseCount": 1,
@@ -252,7 +272,7 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
     self.feedTM(sequence, num=100)
 
 
-  def testF(self):
+  def testG(self):
     """Long repeating sequence with novel pattern at the end"""
     self.initTM({"columnDimensions": [3]})
     self.finishSetUp(ConsecutivePatternMachine(
@@ -268,7 +288,7 @@ class BasicTemporalMemoryTest(AbstractTemporalMemoryTest):
     self.feedTM(sequence, num=10)
 
 
-  def testG(self):
+  def testH(self):
     """A single endlessly repeating pattern"""
     self.initTM({"columnDimensions": [1]})
     self.finishSetUp(ConsecutivePatternMachine(
