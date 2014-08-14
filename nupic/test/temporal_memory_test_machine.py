@@ -204,6 +204,7 @@ class TemporalMemoryTestMachine(object):
     tm = self.tm
     text = ""
 
+    # TODO: Remove printing of segment index
     text += ("Segments: (format => "
              "{segment: [(source cell, permanence), ...])\n")
     text += "------------------------------------\n"
