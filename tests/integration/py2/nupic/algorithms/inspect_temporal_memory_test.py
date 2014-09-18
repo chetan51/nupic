@@ -80,6 +80,45 @@ class InspectTemporalMemoryTest(unittest.TestCase):
     self.assertEqual(stats[4][2], 0)
 
 
+  def testMapColumnsToPredictedCells(self):
+    sequence = self._generateSequence()
+
+    self._feedSequence(sequence)  # train
+    self.tm.clearHistory()
+
+    self._feedSequence(sequence)  # test
+
+    columnsToPredictedCellsA = self.tm.mapColumnsToPredictedCells()
+    columnsToPredictedCellsB = self.tm.mapColumnsToPredictedCells(start=0,
+                                                                  end=10)
+    self.assertEqual(columnsToPredictedCellsA, columnsToPredictedCellsB)
+    self.assertEqual(
+      self._averagePredictedCellsPerColumn(columnsToPredictedCellsA), 1)
+    self.assertEqual(
+      self._averagePredictedCellsPerColumn(columnsToPredictedCellsB), 1)
+
+    self.tm.clearHistory()
+
+    sequence.reverse()
+    sequence.append(sequence.pop(0))
+
+    self._feedSequence(sequence)  # train
+    self.tm.clearHistory()
+
+    self._feedSequence(sequence)  # test
+
+    columnsToPredictedCellsA = self.tm.mapColumnsToPredictedCells()
+    columnsToPredictedCellsB = self.tm.mapColumnsToPredictedCells(start=0,
+                                                                  end=10)
+    self.assertNotEqual(columnsToPredictedCellsA, columnsToPredictedCellsB)
+    self.assertTrue(
+      self._averagePredictedCellsPerColumn(columnsToPredictedCellsA) > 1)
+    self.assertEqual(
+      self._averagePredictedCellsPerColumn(columnsToPredictedCellsB), 1)
+
+    self.tm.clearHistory()
+
+
   # ==============================
   # Helper functions
   # ==============================
@@ -100,6 +139,11 @@ class InspectTemporalMemoryTest(unittest.TestCase):
       else:
         self.tm.compute(pattern)
 
+
+  def _averagePredictedCellsPerColumn(self, columnToPredictedCells):
+    numCells = [len(x) for x in
+                columnToPredictedCells.values()]
+    return sum(numCells) /  float(len(numCells))
 
 
 if __name__ == "__main__":

@@ -23,6 +23,7 @@
 Temporal Memory mixin that enables detailed inspection of history.
 """
 
+from collections import defaultdict
 import numpy
 from prettytable import PrettyTable
 
@@ -190,6 +191,34 @@ class TemporalMemoryInspectMixin(object):
       self.unpredictedActiveColumnsList
     )
     return tuple([statsForResult(result) for result in history])
+
+
+  def mapColumnsToPredictedCells(self, start=None, end=None):
+    """
+    Returns a mapping from columns to predicted cells of the history, limited
+    to the range specified by start and end.
+
+    @param start (int) Starting index of historical range to consider. Use
+                       `None` to start from the beginning.
+    @param end   (int) Ending index of historical range to consider. Use
+                       `None` to go to the ending.
+
+    @return (dict) Mapping from columns to predicted cells
+    """
+    columnsToPredictedCells = defaultdict(set)
+
+    predictedActiveCellsList = self.predictedActiveCellsList[start:end]
+    predictedInactiveCellsList = self.predictedInactiveCellsList[start:end]
+
+    for i in xrange(len(predictedActiveCellsList)):
+      predictedCells = (predictedActiveCellsList[i] |
+                        predictedInactiveCellsList[i])
+
+      for cell in predictedCells:
+        column = self.connections.columnForCell(cell)
+        columnsToPredictedCells[column].add(cell)
+
+    return dict(columnsToPredictedCells)
 
 
   # ==============================
