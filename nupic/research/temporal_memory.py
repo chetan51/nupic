@@ -433,19 +433,17 @@ class TemporalMemory(object):
     @param activeCells (set)         Indicies of active cells
     @param connections (Connections) Connectivity of layer
 
-    @return (dict) Mapping from segment (int) to indices of
-                   active synapses (set)
+    @return (dict) Mapping from segment (int) to active synapses (set). Each
+                   active synapse is represented as a tuple:
+                   (synapse, synapse data).
     """
-    activeSynapsesForSegment = dict()
+    activeSynapsesForSegment = defaultdict(set)
 
     for cell in activeCells:
       for synapse in connections.synapsesForSourceCell(cell):
-        segment, _, _ = connections.dataForSynapse(synapse)
+        synapseData = connections.dataForSynapse(synapse)
 
-        if not segment in activeSynapsesForSegment:
-          activeSynapsesForSegment[segment] = set()
-
-        activeSynapsesForSegment[segment].add(synapse)
+        activeSynapsesForSegment[synapseData[0]].add((synapse, synapseData))
 
     return activeSynapsesForSegment
 
@@ -578,10 +576,8 @@ class TemporalMemory(object):
       return connectedSynapses
 
     # TODO: (optimization) Can skip this logic if permanenceThreshold = 0
-    for synapse in activeSynapsesForSegment[segment]:
-      (_, _, permanence) = connections.dataForSynapse(synapse)
-
-      if permanence >= permanenceThreshold:
+    for (synapse, synapseData) in activeSynapsesForSegment[segment]:
+      if synapseData[2] >= permanenceThreshold:
         connectedSynapses.add(synapse)
 
     return connectedSynapses
