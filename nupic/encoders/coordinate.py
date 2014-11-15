@@ -155,7 +155,7 @@ class CoordinateEncoder(Encoder):
     @return (float) A value in the interval [0, 1), representing the
                     order of the coordinate
     """
-    random = numpy.random.RandomState(coordinate)
+    random = CoordinateEncoder._getRandom(coordinate)
     return random.rand()
 
 
@@ -168,8 +168,19 @@ class CoordinateEncoder(Encoder):
     @param n (int) The number of available bits in the SDR
     @return (int) The index to a bit in the SDR
     """
-    random = numpy.random.RandomState(coordinate)
+    random = CoordinateEncoder._getRandom(coordinate)
     return random.randint(0, n)
+
+
+  @staticmethod
+  def _getRandom(coordinate):
+    """
+    Gets a random number generator seeded with a coordinate.
+
+    @param coordinate (numpy.array) Coordinate
+    @return (numpy.random.RandomState) Random number generator
+    """
+    return numpy.random.RandomState(coordinate)
 
 
   def dump(self):
