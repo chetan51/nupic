@@ -86,4 +86,5 @@ class ModelFactory(object):
            Directory of where the experiment is to be or was saved
     @returns (nupic.frameworks.opf.model.Model) The loaded model instance.
     """
-    return Model.load(savedModelDir)
+    return CLAModel.readFromCheckpoint(savedModelDir)
+    # return Model.load(savedModelDir)

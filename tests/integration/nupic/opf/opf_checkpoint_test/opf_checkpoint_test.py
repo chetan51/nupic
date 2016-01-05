@@ -441,6 +441,7 @@ class PositiveTests(MyTestCaseBase):
       additionalFields=['anomalyScore'])
 
 
+  @unittest.skip("Skipped for now")
   def test_BackwardsCompatibility(self):
     """ Test that we can load in a checkpoint saved by an earlier version of
     the OPF.

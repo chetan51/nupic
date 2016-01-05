@@ -472,7 +472,8 @@ def _runExperimentImpl(options, model=None):
 def _saveModel(model, experimentDir, checkpointLabel):
   """Save model"""
   checkpointDir = _getModelCheckpointDir(experimentDir, checkpointLabel)
-  model.save(saveModelDir=checkpointDir)
+  model.writeToCheckpoint(checkpointDir)
+  # model.save(saveModelDir=checkpointDir)
 
 
 
